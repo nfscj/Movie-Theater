@@ -22,7 +22,7 @@ namespace Movie_Theater_Wednesday
             {
                 if (Decision == 2)
                 {
-                    Console.WriteLine("\nCheck in isnt ready yet");
+                    Console.WriteLine("\nThe Check in process isn't ready yet.\nFeel free to keep your rental :)");
                     Main();
                 }
                 else
@@ -61,11 +61,11 @@ namespace Movie_Theater_Wednesday
         {
             
 
-            Console.WriteLine("\nName?");
+            Console.WriteLine("\nWhat is the renter's name?");
             string name = Console.ReadLine();
-            Console.WriteLine("\nPhone Number?");
-            long phoneNum = Int64.Parse(Console.ReadLine());
-            Console.WriteLine("\nMovie?");
+            Console.WriteLine("\nWhat is the renters phone number or e-mail address?");
+            string phoneNum = Console.ReadLine();
+            Console.WriteLine("\nWhat movie will be rented?");
             string movie = Console.ReadLine();
             
             Name(name,movie,phoneNum);//sends string name and movie to Movie method to write to txt file
@@ -82,20 +82,40 @@ namespace Movie_Theater_Wednesday
         }
         static void MoviesNotReturned()
         {
-            StreamReader reader = new StreamReader("..\\..\\Moviesout.txt");
+            StreamReader Renterreader = new StreamReader("..\\..\\Renterlist.txt");
             int lineNumber = 0;
-            string line = reader.ReadLine();
-            while (line != null)
-            {
-                lineNumber++;
-                Console.WriteLine("\n"+line);
-                line = reader.ReadLine();
-            }
-            reader.Close();
+            string line = Renterreader.ReadLine();
+            using (Renterreader)
+                while (line != null)
+                {
+                    lineNumber++;
 
+                    string name = line;
+                    StreamReader reader = new StreamReader("..\\..\\" + name + ".txt");
+                    int NumberOfLines = 5;
+                    string[] ListLines = new string[NumberOfLines];
+                    using (reader)
+                        for (int i = 0; i < NumberOfLines; i++)
+                        {
+                            ListLines[i] = reader.ReadLine();
+                            Console.WriteLine(ListLines[4]);
+                        }
+                    line = Renterreader.ReadLine();
+
+                }
+            Console.WriteLine();
+        }
+        static void MoviesOut(string name, string movie, string phoneNum)
+        {
+            string path = "..\\..\\" + name + ".txt";
+
+            using (StreamWriter writer = File.AppendText(path))
+            {
+                writer.WriteLine("The movie " + movie + " was checked out by " + name + " on " + DateTime.Now);
+            }
         }
 
-        static void Name(string name, string movie, long phoneNum)
+        static void Name(string name, string movie, string phoneNum)
         {
             StreamWriter writer = new StreamWriter("..\\..\\"+name+".txt");
             using (writer)
@@ -107,15 +127,7 @@ namespace Movie_Theater_Wednesday
 
             }
         }
-        static void MoviesOut(string name, string movie, long phoneNum)
-        {
-            string path = "..\\..\\Moviesout.txt";
-            
-            using (StreamWriter writer = File.AppendText(path))
-            {
-                writer.WriteLine("The movie "+movie+" was checked out by "+name+" on "+ DateTime.Now);
-            }
-        }
+        
         static void DeleteInfo(string name)
         {
             StreamReader reader = new StreamReader("..\\..\\" + name + ".txt");
@@ -161,11 +173,11 @@ namespace Movie_Theater_Wednesday
                 string date = ListLines[3];
                 DateTime incdata = Convert.ToDateTime(date);
                 bool late = true;
-                System.DateTime time = incdata.AddDays(7);
+                System.DateTime time = incdata.AddHours(12);
                 late = (time < DateTime.Now);
                 if (late)
                 {
-                    Console.WriteLine("\n\nBOOM! This rental is late and five dollars has been added to " + name + "'s rental fee\nTo contact " + name + " call " + ListLines[1]);
+                    Console.WriteLine("\n\nBOOM! " + name + "'s rental is late and $5.00 has been added to " + name + "'s rental fee\n\nYou can contact " + name + " at " + ListLines[1]);
                 }
                 else
                 {
@@ -209,11 +221,11 @@ namespace Movie_Theater_Wednesday
                 string date = ListLines[3];
                 DateTime incdata = Convert.ToDateTime(date);
                 bool late = true;
-                System.DateTime time = incdata.AddDays(7);
+                System.DateTime time = incdata.AddHours(12);
                 late = (time < DateTime.Now);
                 if (late)
                 {
-                    Console.WriteLine("\n\nBOOM! This rental is late and five dollars has been added to " + name + "'s rental fee\nTo contact " + name + " call " + ListLines[1]);
+                    Console.WriteLine("\n\nBOOM! " + name + "'s rental is late and $5.00 has been added to " + name + "'s rental fee\n\nYou can contact " + name + " at " + ListLines[1]);
                 }
                 else
                 {
@@ -226,4 +238,3 @@ namespace Movie_Theater_Wednesday
         }
     }
 }
-
